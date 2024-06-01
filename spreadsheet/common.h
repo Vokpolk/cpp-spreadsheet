@@ -39,16 +39,39 @@ public:
     enum class Category {
         Ref,    // ссылка на ячейку с некорректной позицией
         Value,  // ячейка не может быть трактована как число
-        Div0,  // в результате вычисления возникло деление на ноль
+        Arithmetic,  // в результате вычисления возникло деление на ноль
     };
 
-    FormulaError(Category category);
+    FormulaError(Category category)
+        : category_(category)
+    {}
 
-    Category GetCategory() const;
+    Category GetCategory() const {
+        return category_;
+    }
 
-    bool operator==(FormulaError rhs) const;
+    bool operator==(FormulaError rhs) const {
+        return ToString() == rhs.ToString();
+    }
 
-    std::string_view ToString() const;
+    std::string_view ToString() const {
+        using namespace std::literals;
+        switch (category_)
+        {
+        case FormulaError::Category::Ref:
+            return "Ref"sv;
+            break;
+        case FormulaError::Category::Value:
+            return "Value"sv;
+            break;
+        case FormulaError::Category::Arithmetic:
+            return "Arithmetic"sv;
+            break;
+        default:
+            return ""sv;
+            break;
+        }
+    }
 
 private:
     Category category_;
