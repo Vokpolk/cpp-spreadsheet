@@ -30,28 +30,6 @@ void Sheet::SetCell(Position pos, std::string text) {
         cells_[pos] = std::make_unique<Cell>(*this);
     }
     cells_[pos]->Set(text);
-
-    /*auto cell = std::make_unique<Cell>();
-    cell->Set(text);
-
-    if (pos.row >= size_.rows) {
-        cells_.resize(pos.row + 1);
-        size_.rows = static_cast<size_t>(pos.row + 1);
-    }
-
-    if (pos.col >= size_.cols) {
-        for (int i = 0; i <= pos.row; i++) {
-            cells_[i].resize(pos.col + 1);
-        }
-        size_.cols = static_cast<size_t>(pos.col + 1);
-    }
-    else {
-        cells_[pos.row].resize(size_.cols);
-    }
-
-    cells_[pos.row][pos.col] = std::move(cell);*/
-
-
 }
 
 const CellInterface* Sheet::GetCell(Position pos) const {
@@ -109,15 +87,15 @@ void Sheet::PrintValues(std::ostream& output) const {
                 output << '\t';
             }
             if (cells_.count({ i,j }) != 0 && cells_.at({ i,j }).get() != nullptr) {
-
-                if (std::holds_alternative<double>(cells_.at({ i,j }).get()->GetValue())) {
-                    output << std::get<double>(cells_.at({ i,j }).get()->GetValue());
+				auto cell = cells_.at({ i,j }).get();
+                if (std::holds_alternative<double>(cell->GetValue())) {
+                    output << std::get<double>(cell->GetValue());
                 }
-                else if (std::holds_alternative<std::string>(cells_.at({ i,j }).get()->GetValue())) {
-                    output << std::get<std::string>(cells_.at({ i,j }).get()->GetValue());
+                else if (std::holds_alternative<std::string>(cell->GetValue())) {
+                    output << std::get<std::string>(cell->GetValue());
                 }
                 else {
-                    output << std::get<FormulaError>(cells_.at({ i,j }).get()->GetValue());
+                    output << std::get<FormulaError>(cell->GetValue());
                 }
             }
             first = true;

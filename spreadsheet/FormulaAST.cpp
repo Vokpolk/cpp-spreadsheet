@@ -144,21 +144,23 @@ namespace ASTImpl {
 
             double Evaluate(const SheetInterface& sheet) const override {
                 double result;
+				double left_value = lhs_.get()->Evaluate(sheet);
+				double right_value = rhs_.get()->Evaluate(sheet);
                 switch (type_) {
                 case Add: {
-                    result = lhs_.get()->Evaluate(sheet) + rhs_.get()->Evaluate(sheet);
+                    result = left_value + right_value;
                     break;
                 }
                 case Subtract: {
-                    result = lhs_.get()->Evaluate(sheet) - rhs_.get()->Evaluate(sheet);
+                    result = left_value - right_value;
                     break;
                 }
                 case Multiply: {
-                    result = lhs_.get()->Evaluate(sheet) * rhs_.get()->Evaluate(sheet);
+                    result = left_value * right_value;
                     break;
                 }
                 case Divide: {
-                    result = lhs_.get()->Evaluate(sheet) / rhs_.get()->Evaluate(sheet);
+                    result = left_value / right_value;
                     break;
                 }
                 default:
@@ -205,19 +207,11 @@ namespace ASTImpl {
                 return EP_UNARY;
             }
 
-            double Evaluate(const SheetInterface& sheet) const override {
-                switch (type_)
-                {
-                case UnaryPlus:
-                    return operand_.get()->Evaluate(sheet);
-                    break;
-                case UnaryMinus:
-                    return -operand_.get()->Evaluate(sheet);
-                    break;
-                default:
-                    return 0.0;
-                    break;
-                }
+            double Evaluate(const SheetInterface& sheet) const override {				
+				if (type_ == UnaryMinus) {
+					return -operand_.get()->Evaluate(sheet);
+				}
+				return operand_.get()->Evaluate(sheet);
             }
 
         private:
